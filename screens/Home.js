@@ -1,31 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect, useContext } from 'react'; // Import useContext
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Octicons } from '@expo/vector-icons';
+import axios from 'axios'; // Import axios for making HTTP requests
 import { InnerContainer, 
-  PageTitle, 
-  WelcomeContainer, 
+  PageTitleIII, 
   Colors, 
   CustomHeader, 
-  CustomHeaderText,
-  Line, 
- } from './../components/styles';
+  CustomHeaderText, Line 
+} from './../components/styles';
 
-// Screens
+import { useNavigation } from '@react-navigation/native'; 
+
+// Import your screens here
 import SettingsScreen from './Settings';
 import AddScreen from './Add';
 import ExploreScreen from './Explore';
 
-const HomeScreen = ({route}) => {
-  const { name } = route.params || {}; // Set default value for name
-  
+// Import CredentialsContext to access stored credentials
+import { CredentialsContext } from './../components/CredentialsContext';
+
+const HomeScreen = ({ name }) => {
   return (
     <InnerContainer style={{ backgroundColor: 'white' }}>
-      <PageTitle>Plans Suggestion</PageTitle>
+      <PageTitleIII>Welcome, {name}</PageTitleIII>
       <Line />
-      <PageTitle>Latest Visit</PageTitle>
-      <Line />
-      <PageTitle>Ad</PageTitle>
-      <PageTitle>{name ? `Welcome, ${name}` : 'Welcome'}</PageTitle>
     </InnerContainer>
   );
 };
@@ -33,6 +31,34 @@ const HomeScreen = ({route}) => {
 const Tab = createBottomTabNavigator();
 
 const Home = () => {
+  const [username, setUsername] = useState('');
+  const { storedCredentials } = useContext(CredentialsContext);
+  const navigation = useNavigation();
+
+  // useEffect(() => {
+  //   const fetchUsername = async () => {
+  //     try {
+  //       if (!storedCredentials || !storedCredentials.user_id) {
+  //         throw new Error("User ID is missing.");
+  //       }
+  //       const response = await axios.get(`http://172.20.10.3:3000/user/userdata/${storedCredentials.user_id}`);
+  //       setUsername(response.data.username);
+  //     } catch (error) {
+  //       console.error('Error fetching username:', error);
+  //       // Handle different types of errors
+  //       if (axios.isAxiosError(error)) {
+  //         console.error('Axios Error Details:', error.response?.data);
+  //       }
+  //     }
+  //   };
+
+  //   fetchUsername();
+
+  //   return () => {
+  //     // Cleanup tasks, if any
+  //   };
+  // }, [storedCredentials]);
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -44,7 +70,7 @@ const Home = () => {
         tabBarStyle: {
           backgroundColor: Colors.primary,
         },
-        headerShown: true,
+        // headerShown: true,
         header: ({route }) => (
           <CustomHeader>
             <CustomHeaderText>{route.name}</CustomHeaderText>
@@ -67,10 +93,9 @@ const Home = () => {
         },
       })}
     >
-      <Tab.Screen
-        name="Home"
-        component={HomeScreen}
-      />
+      <Tab.Screen name="Home">
+        {() => <HomeScreen name={storedCredentials?.name} />}
+      </Tab.Screen>
       <Tab.Screen
         name="Explore"
         component={ExploreScreen}

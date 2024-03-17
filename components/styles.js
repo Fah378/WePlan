@@ -85,6 +85,18 @@ export const PageTitleII = styled.Text`
     padding: 10px;
 `;
 
+export const PageTitleIII = styled.Text`
+    font-size: 25px;
+    text-align: left;
+    font-weight: bold;
+    color: ${brand};
+    padding: 10px;
+
+    ${ (props) => props.welcome && `
+        font-size: 35px;
+    `}
+`;
+
 export const SubTitle = styled.Text`
     font-size: 18px;
     margin-bottom: 20px;
@@ -213,4 +225,17 @@ export const CustomHeaderText = styled.Text`
   color: ${tertiary};
   font-size: 18px;
   font-weight: bold;
+`;
+
+export const TripPanel = styled.TouchableOpacity`
+    width: 340px;
+    background-color: ${props => props.backgroundColor || '#fff'};
+    border-radius: 15px; 
+    padding: 20px; 
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); 
+    margin-vertical: 10px; 
+`;
+
+export const TripPanelText = styled.Text`
+    color: black; /* Adjust text color as needed */
 `;

@@ -9,7 +9,7 @@ const Add = ({navigation}) => {
                 <InnerContainer style={{ backgroundColor: 'white' }}>
                     <StyledFormArea>
                     <StyledButton onPress={() => 
-                        { navigation.navigate('Create') }} 
+                        { navigation.navigate('Create')} } 
                         style={{ marginTop: 30 }
                         }>
                         <ButtonText>Create New Plan</ButtonText>

@@ -1,32 +1,32 @@
-// import React from 'react';
-// import { StatusBar } from 'expo-status-bar';
-// import { InnerContainer, PageTitle, StyledFormArea, StyledButton, ButtonText, Line, WelcomeContainer } from '../components/styles';
-
-// const Profile = ({navigate}) => {
-//     return (
-//         <>
-//             <StatusBar style="dark" />
-//             <InnerContainer>
-//                 <WelcomeContainer>
-//                     <PageTitle>This is Settings page.</PageTitle>
-//                     <StyledFormArea>
-//                         <Line />
-//                         <StyledButton onPress={() => { navigation.navigate('Login') }}>
-//                             <ButtonText>Log out</ButtonText>
-//                         </StyledButton>
-//                     </StyledFormArea>
-//                 </WelcomeContainer>
-//             </InnerContainer>
-//         </>
-//     );
-// };
-
-// export default Profile;
-import React from 'react';
+import React, { useContext }  from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { InnerContainer, PageTitle, StyledFormArea, StyledButton, ButtonText, Line, WelcomeContainer } from '../components/styles';
+import { useNavigation } from '@react-navigation/native';
+import { InnerContainer,
+    StyledFormArea, 
+    StyledButton, 
+    ButtonText, 
+    Line, 
+    WelcomeContainer 
+} from '../components/styles';
 
-const Profile = ({ navigation }) => {
+//async-storage
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+//credentials context
+import { CredentialsContext } from './../components/CredentialsContext';
+
+const Settings = ({ navigation }) => {
+    //context
+    const { storedCredentials, setStoredCredentials } = useContext(CredentialsContext);
+
+    const clearLogin = () => {
+        AsyncStorage.removeItem('WePlanCredentails')
+        .then(() => {
+            setStoredCredentials("");
+        })
+        .catch(error => console.log(error))
+    }
+
     return (
         <>
             <StatusBar style="dark" />
@@ -43,4 +43,4 @@ const Profile = ({ navigation }) => {
     );
 };
 
-export default Profile;
+export default Settings;

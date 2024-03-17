@@ -1,25 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import { StatusBar, View, Text } from 'react-native';
+import React, { useState, useEffect, useContext} from 'react';
+import { StatusBar, View, Text, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import {
     InnerContainerII,
-    PageTitleII,
+    PageTitle,
     SubTitle,
     StyledContainer,
-    Line
+    Line,
+    TripPanel,
+    TripPanelText
 } from './../components/styles';
 
-const ExistPlan = () => {
+// Import CredentialsContext to access stored credentials
+import { CredentialsContext } from './../components/CredentialsContext';
+
+//keyboard avoiding view
+import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
+
+const ExistPlan = ({_id}) => {
+    const { storedCredentials } = useContext(CredentialsContext);
     const [tripDetails, setTripDetails] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigation = useNavigation();
 
     useEffect(() => {
         const fetchPlans = async () => {
             try {
-                const response = await fetch('http://172.20.10.3:3000/plans/plans/65afcaea2532cc4d3c6bfb6a');
+                const response = await fetch(`http://172.20.10.3:3000/plans/plans/${storedCredentials._id}`, {});
+    
                 if (!response.ok) {
-                    throw new Error('Failed to fetch plans');
+                    throw new Error(`Failed to fetch plans: ${response.status} ${response.statusText}`);
                 }
+    
                 const data = await response.json();
                 // Format dates to display only the date part
                 const formattedTripDetails = data.tripDetails.map(trip => ({
@@ -35,7 +48,7 @@ const ExistPlan = () => {
                 setLoading(false);
             }
         };
-        
+    
         fetchPlans();
     }, []);
 
@@ -45,27 +58,34 @@ const ExistPlan = () => {
         return date.toISOString().split('T')[0]; // Extracts only the date part
     };
 
+    // Function to navigate to TripDetails screen with trip details
+    const navigateToTripDetails = (trip) => {
+        navigation.navigate('TripDetails', { tripDetails: trip });
+    };
+
     return (
+        <KeyboardAvoidingWrapper>
         <StyledContainer>
             <StatusBar style="dark" />
-            <PageTitleII >List of exist plans</PageTitleII>
             <InnerContainerII>
                 {loading && <Text>Loading...</Text>}
                 {error && <Text>{error}</Text>}
                 {tripDetails.map((trip, index) => (
-                    <View key={index}>
-                        <Line />
-                        <SubTitle>Trip Name: {trip.tripName}</SubTitle>
-                        <SubTitle>Start Date: {trip.startDate}</SubTitle>
-                        <SubTitle>End Date: {trip.endDate}</SubTitle>
-                        <SubTitle>Province: {trip.province}</SubTitle>
-                        <SubTitle>Category: {trip.category}</SubTitle>
-                        <Line />
-                        <Line />
-                    </View>
+                    <TripPanel key={index} onPress={() => navigateToTripDetails(trip)}>
+                    <TripPanelText>
+                        <Text> 
+                            <SubTitle>{trip.tripName}</SubTitle>
+                        </Text>
+                        <Text>{'\n'}</Text>
+                        <Text>
+                            <SubTitle>{trip.startDate} - {trip.endDate}</SubTitle>
+                        </Text>
+                    </TripPanelText>
+                </TripPanel>                
                 ))}
             </InnerContainerII>
         </StyledContainer>
+    </KeyboardAvoidingWrapper>
     );
 };
 

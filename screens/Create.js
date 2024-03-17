@@ -1,4 +1,4 @@
-import React, {useState}  from 'react';
+import React, {useState, useContext, useEffect}  from 'react';
 import { StatusBar } from 'expo-status-bar';
 
 import Add from './Add';
@@ -6,13 +6,10 @@ import Add from './Add';
 //formik
 import { Formik } from 'formik';
 
-//icons
-import {Octicons, Ionicons} from '@expo/vector-icons';
-
 import {
     StyledContainer,
     InnerContainer,
-    PageTitleII,
+    PageTitle,
     SubTitle,
     StyledFormArea,
     LeftIcon,
@@ -38,12 +35,22 @@ const{brand, darklight, primary} = Colors;
 //keyboard avoiding view
 import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
 
+//async-storage
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+//credentials context
+import { CredentialsContext } from './../components/CredentialsContext';
+
 //API client
 import axios from 'axios';
 
 const Create = () => {
     const [message, setMessage] = useState();
     const [messageType, setMessageType] = useState();
+
+    //context
+    const { storedCredentials, setStoredCredentials } = useContext(CredentialsContext);
+    const { _id, username} = storedCredentials; // Extract userID from storedCredentials
     
     //form handling
     // const handleCreate = (credentials, setSubmitting) => {
@@ -70,13 +77,23 @@ const Create = () => {
     //     })
     // }
 
+    useEffect(() => {
+        console.log("Stored Credentials:", storedCredentials);
+    }, []); // Log storedCredentials when component mounts
+
     const handleCreate = (credentials, setSubmitting, resetForm) => {
         handleMessage(null);
+    
+        // Get userID from storedCredentials
+        const { _id: userID } = storedCredentials;
+    
+        // Set isPublic to false (default)
+        credentials.isPublic = false;
     
         const url = 'http://172.20.10.3:3000/plans/plans';
     
         axios
-            .post(url, credentials)
+            .post(url, { ...credentials, userID }) // Include userID in the request payload
             .then((response) => {
                 const result = response.data;
                 const { message, status, data } = result;
@@ -95,7 +112,7 @@ const Create = () => {
                 setSubmitting(false);
                 handleMessage("An error occurred. Check your network and try again.");
             });
-    };
+    };    
 
     const handleMessage = (message, type = 'FAILED') => {
         setMessage(message);
@@ -107,13 +124,14 @@ const Create = () => {
         <StyledContainer>
             <StatusBar style="dark" />
             <InnerContainer>
-                <PageTitleII>Create New Plan</PageTitleII>
+                <PageTitle>Create New Plan</PageTitle>
+                <SubTitle>By {username}</SubTitle>
 
                 <Formik
-                    initialValues={{tripName:'', Destination:'', startDate:'', endDate:'', tripMembers:''}}
+                    initialValues={{tripName:'', Description:'', startDate:'', endDate:'', tripMembers:''}}
                     onSubmit={(values, {setSubmitting, resetForm}) => {
                         values = {...values};
-                        if(values.tripName == '' || values.Destination == '' || values.startDate == '' || values.endDate == '' || values.tripMembers == ''){
+                        if(values.tripName == '' || values.startDate == '' || values.endDate == '' || values.tripMembers == ''){
                             handleMessage('Please fill all the fields.');
                             setSubmitting(false);
                         } else {
@@ -131,12 +149,12 @@ const Create = () => {
                         value={values.tripName}
                     />
                     <MyTextInput 
-                        label="Destination"
-                        placeholder = "Destination"
+                        label="Description"
+                        placeholder = "Description"
                         placeholderTextColor={darklight}
-                        onChangeText={handleChange('Destination')}
-                        onBlur={handleBlur('province')}
-                        value={values.province}
+                        onChangeText={handleChange('description')}
+                        onBlur={handleBlur('description')}
+                        value={values.description}
                     />
                     <MyTextInput 
                         label="Start Date"

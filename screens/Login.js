@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import { StatusBar } from 'expo-status-bar';
 
 //formik
@@ -42,38 +42,60 @@ import KeyboardAvoidingWrapper from './../components/KeyboardAvoidingWrapper';
 //API client
 import axios from 'axios';
 
+//async-storage
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+//credentials context
+import { CredentialsContext } from './../components/CredentialsContext';
+
 const Login = ({navigation}) => {
     const [hidePassword, setHidePassword] = useState(true);
     const [message, setMessage] = useState();
     const [messageType, setMessageType] = useState();
 
+    //context
+    const {storedCredentials, setStoredCredentials} = useContext(CredentialsContext );
+
     const handleLogin = (credentials, setSubmitting) => {
         handleMessage(null);
         const url = 'http://172.20.10.3:3000/user/login';
-
+    
         axios
             .post(url, credentials)
             .then((response) => {
                 const result = response.data;
-                const {message, status, data} = result;
-
-                if (status !== 'SUCCESS'){
+                const { message, status, data } = result;
+    
+                if (status !== 'SUCCESS') {
                     handleMessage(message, status);
                 } else {
-                    navigation.navigate('Welcome', {...data[0]});
+                    navigation.navigate('Home'); // Navigate to 'Home' instead of 'Welcome'
+                    persistLogin({ ...data[0] }, message, status);
                 }
                 setSubmitting(false);
             })
             .catch(error => {
-            console.log(error);
-            setSubmitting(false);
-            handleMessage("An error occured. Check your network and try again.");
-        })
-    }
+                console.log(error);
+                setSubmitting(false);
+                handleMessage("An error occurred. Check your network and try again.");
+            });
+    };    
 
     const handleMessage = (message, type = 'FAILED') => {
         setMessage(message);
         setMessageType(type);
+    }
+
+    const persistLogin = (credentials, message, status) => {
+        AsyncStorage.setItem('WePlanCredentails', JSON.stringify(credentials))
+        .then(() => {
+            handleMessage(message, status);
+            setStoredCredentials(credentials);
+        })
+        .catch((error) => {
+            console.log(error);
+            handleMessage('Persisting login failed');
+        })
     }
 
     return (
