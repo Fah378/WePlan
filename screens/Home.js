@@ -1,63 +1,106 @@
-import React, { useState, useEffect, useContext } from 'react'; // Import useContext
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, TouchableOpacity, FlatList } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Octicons } from '@expo/vector-icons';
-import axios from 'axios'; // Import axios for making HTTP requests
 import { InnerContainer, 
   PageTitleIII, 
   Colors, 
-  CustomHeader, 
-  CustomHeaderText, Line 
-} from './../components/styles';
-
+  TripPanel, 
+  TripPanelText, 
+  SubTitle,
+  CustomHeader,
+  CustomHeaderText } from './../components/styles';
 import { useNavigation } from '@react-navigation/native'; 
-
-// Import your screens here
+import { CredentialsContext } from './../components/CredentialsContext';
 import SettingsScreen from './Settings';
-import AddScreen from './Add';
+import PlansScreen from './Plans';
 import ExploreScreen from './Explore';
 
-// Import CredentialsContext to access stored credentials
-import { CredentialsContext } from './../components/CredentialsContext';
-
 const HomeScreen = ({ name }) => {
+  const [tripDetails, setTripDetails] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { storedCredentials } = useContext(CredentialsContext);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const fetchPlans = async () => {
+      try {
+        if (!storedCredentials) {
+          // If storedCredentials is null, do not proceed with fetching plans
+          return;
+        }
+
+        const response = await fetch(`http://172.20.10.3:3000/plans/plans/${storedCredentials?._id}`, {});
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch plans: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        const formattedTripDetails = data.tripDetails.map(trip => ({
+          ...trip,
+          startDate: formatDate(trip.startDate),
+          endDate: formatDate(trip.endDate),
+        }));
+        // Sort tripDetails based on startDate
+        formattedTripDetails.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+        setTripDetails(formattedTripDetails);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching plans:', error);
+        setError('Failed to fetch plans. Please try again later.');
+        setLoading(false);
+      }
+    };
+
+    fetchPlans();
+  }, []);
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  };
+
+  // Function to navigate to TripDetails screen with trip details
+  const navigateToTripDetails = (trip) => {
+    navigation.navigate('TripDetails', { tripDetails: trip });
+};
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity>
+      <TripPanel onPress={() => navigateToTripDetails(item)}>
+        <TripPanelText>
+          <Text> 
+            <SubTitle>{item.tripName}</SubTitle>
+          </Text>
+          <Text>{'\n'}</Text>
+          <Text>
+            <SubTitle>{item.startDate} - {item.endDate}</SubTitle>
+          </Text>
+        </TripPanelText>
+      </TripPanel>
+    </TouchableOpacity>
+  );  
+
   return (
-    <InnerContainer style={{ backgroundColor: 'white' }}>
+    <View>
       <PageTitleIII>Welcome, {name}</PageTitleIII>
-      <Line />
-    </InnerContainer>
+      <FlatList
+        data={tripDetails}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+      />
+    </View>
   );
 };
 
 const Tab = createBottomTabNavigator();
 
 const Home = () => {
-  const [username, setUsername] = useState('');
   const { storedCredentials } = useContext(CredentialsContext);
-  const navigation = useNavigation();
-
-  // useEffect(() => {
-  //   const fetchUsername = async () => {
-  //     try {
-  //       if (!storedCredentials || !storedCredentials.user_id) {
-  //         throw new Error("User ID is missing.");
-  //       }
-  //       const response = await axios.get(`http://172.20.10.3:3000/user/userdata/${storedCredentials.user_id}`);
-  //       setUsername(response.data.username);
-  //     } catch (error) {
-  //       console.error('Error fetching username:', error);
-  //       // Handle different types of errors
-  //       if (axios.isAxiosError(error)) {
-  //         console.error('Axios Error Details:', error.response?.data);
-  //       }
-  //     }
-  //   };
-
-  //   fetchUsername();
-
-  //   return () => {
-  //     // Cleanup tasks, if any
-  //   };
-  // }, [storedCredentials]);
 
   return (
     <Tab.Navigator
@@ -70,7 +113,6 @@ const Home = () => {
         tabBarStyle: {
           backgroundColor: Colors.primary,
         },
-        // headerShown: true,
         header: ({route }) => (
           <CustomHeader>
             <CustomHeaderText>{route.name}</CustomHeaderText>
@@ -81,8 +123,8 @@ const Home = () => {
 
           if (route.name === 'Home') {
             iconName = 'home';
-          } else if (route.name === 'Add') {
-            iconName = 'plus';
+          } else if (route.name === 'Plans') {
+            iconName = 'book';
           } else if (route.name === 'Settings') {
             iconName = 'gear';
           } else if (route.name === 'Explore') {
@@ -101,8 +143,8 @@ const Home = () => {
         component={ExploreScreen}
       />
       <Tab.Screen
-        name="Add"
-        component={AddScreen}
+        name="Plans"
+        component={PlansScreen}
       />
       <Tab.Screen
         name="Settings"

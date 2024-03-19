@@ -1,7 +1,7 @@
 import React, {useState, useContext, useEffect}  from 'react';
 import { StatusBar } from 'expo-status-bar';
 
-import Add from './Add';
+import Add from './Plans';
 
 //formik
 import { Formik } from 'formik';

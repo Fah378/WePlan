@@ -1,6 +1,10 @@
+// Inside your RootStack.js file
+
 import React, { useContext } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { TouchableOpacity, Text } from 'react-native';
+import { Octicons } from '@expo/vector-icons';
 
 // Import screens
 import Login from './../screens/Login';
@@ -8,11 +12,12 @@ import Signup from './../screens/Signup';
 import Welcome from './../screens/Welcome';
 import Home from '../screens/Home';
 import Settings from '../screens/Settings';
-import Add from './../screens/Add';
+import Plans from '../screens/Plans';
 import Explore from './../screens/Explore';
 import Create from '../screens/Create';
 import ExistPlan from '../screens/ExistPlan';
 import TripDetails from '../screens/TripDetails';
+import EditPlan from '../screens/EditPlan';
 
 // Import CredentialsContext
 import { CredentialsContext } from './../components/CredentialsContext';
@@ -35,7 +40,7 @@ const RootStack = () => {
         <Stack.Screen name="Welcome" component={Welcome} />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Settings" component={Settings} />
-        <Stack.Screen name="Add" component={Add} />
+        <Stack.Screen name="Plans" component={Plans} />
         <Stack.Screen name="Explore" component={Explore} />
         <Stack.Screen 
             name="Create" 
@@ -61,6 +66,15 @@ const RootStack = () => {
                 headerShown: true, 
                 headerBackTitle: 'Back',
                 headerTitle: 'Trip Details',
+              }}
+        />
+        <Stack.Screen 
+            name="EditPlan" 
+            component={EditPlan} 
+            options={{
+                headerShown: true, 
+                headerBackTitle: 'Back',
+                headerTitle: 'Edit Plan',
               }}
         />
       </Stack.Navigator>

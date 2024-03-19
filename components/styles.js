@@ -22,6 +22,12 @@ export const StyledContainer = styled.View`
     padding-top: ${StatusBarHeight ? `${StatusBarHeight + 30}px` : '30px'};
     background-color: ${primary};
 `
+export const StyledContainerII = styled.View`
+    flex: 1;
+    padding: 10px 25px 25px 25px; /* Padding: top 10px, right 25px, bottom 25px, left 25px */
+    padding-top: ${StatusBarHeight ? `${StatusBarHeight + 20}px` : '5px'}; /* Adjusted padding top */
+    background-color: ${primary};
+`;
 
 export const InnerContainer = styled.View`
     flex: 1;
@@ -32,7 +38,7 @@ export const InnerContainer = styled.View`
 export const InnerContainerII = styled.View`
     flex: 1;
     width: 100%;
-    align-items: left;
+    align-items: center;
 `;
 
 export const WelcomeContainer = styled(InnerContainer)`
@@ -234,6 +240,7 @@ export const TripPanel = styled.TouchableOpacity`
     padding: 20px; 
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); 
     margin-vertical: 10px; 
+    margin-horizontal: 10px;
 `;
 
 export const TripPanelText = styled.Text`

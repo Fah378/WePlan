@@ -68,42 +68,17 @@ const styles = StyleSheet.create({
     },
 });
 
-const TripDetails = ({ route }) => {
+const EditPlan = ({ route }) => {
     const { tripDetails } = route.params; // Get trip details from navigation parameters
     const mapRef = useRef(null);
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [showModal, setShowModal] = useState(false);
 
-    const handleConfirmSelection = async () => {
-        // Delay execution to ensure state update
-        setTimeout(async () => {
-            console.log("Selected location in confirm:", selectedLocation);
-    
-            // Prepare data for API request
-            const requestData = {
-                locationName: selectedLocation.name, // Use location name for locationName
-                date: '2024-03-20T12:00:00Z',
-                lat: selectedLocation.lat,
-                lng: selectedLocation.lng,
-                plansID: '65eac7cddbff381a8f1bf22f', // You need to provide plansID here
-            };
-    
-            try {
-                // Call the API endpoint to post data
-                const response = await axios.post('http://172.20.10.3:3000/details/details', requestData);
-                console.log('Response from API:', response.data);
-    
-                // Optionally update state or perform other actions upon successful post
-            } catch (error) {
-                console.error('Error posting data to API:', error);
-                // Handle error
-            }
-    
-            // Perform actions to pin the marker permanently
-            setShowModal(false); // Close the modal
-        }, 50); // Delay of 50 milliseconds 
-    };    
-    
+    // Function to handle confirming selection and pinning the marker
+    const handleConfirmSelection = () => {
+        // Perform actions to pin the marker permanently
+        setShowModal(false); // Close the modal
+    };
 
     // Function to handle cancelling selection
     const handleCancelSelection = () => {
@@ -112,28 +87,8 @@ const TripDetails = ({ route }) => {
 
     // Function to handle tapping on the marker
     const handleMarkerPress = () => {
-        console.log("Selected location:", selectedLocation);
         setShowModal(true); // Show the modal
     };
-
-    const handlePress = (data, details = null) => {
-        if (details && details.geometry && details.geometry.location) {
-            console.log("Selected location details:", {
-                name: details.name,
-                lat_lng: `${details.geometry.location.lat},${details.geometry.location.lng}`
-            });
-    
-            setSelectedLocation({
-                name: details.name,
-                lat: details.geometry.location.lat,
-                lng: details.geometry.location.lng,
-            });
-    
-            moveToLocation(details.geometry.location.lat, details.geometry.location.lng);
-        } else {
-            console.error('Selected location is undefined or null.');
-        }
-    };      
 
     // Function to move to a specific location on the map
     async function moveToLocation(latitude, longitude) {
@@ -149,23 +104,28 @@ const TripDetails = ({ route }) => {
     }
 
     return (
-        <View style={styles.container}>
+        <StyledContainer>
             <StatusBar style="dark" />
             <InnerContainer>
-                <SubTitle>{tripDetails.tripName}</SubTitle>
-                <SubTitle>{tripDetails.startDate} - {tripDetails.endDate}</SubTitle>
                 <View style={styles.container}>
                     <View style={styles.searchContainer}>
-                    <GooglePlacesAutocomplete
-                        fetchDetails={true}
-                        placeholder='Search'
-                        onPress={handlePress}
-                        query={{
-                            key: GOOGLE_MAPS_API_KEY,
-                            language: 'en',
-                        }}
-                        onFail={error => console.log(error)}
-                    />
+                        <GooglePlacesAutocomplete
+                            fetchDetails={true}
+                            placeholder='Search'
+                            onPress={(data, details = null) => {
+                                console.log(JSON.stringify(details?.geometry?.location));
+                                moveToLocation(
+                                    details?.geometry?.location.lat,
+                                    details?.geometry?.location.lng
+                                );
+                                setSelectedLocation(details?.geometry?.location);
+                            }}
+                            query={{
+                                key: GOOGLE_MAPS_API_KEY,
+                                language: 'en',
+                            }}
+                            onFail={error => console.log(error)}
+                        />
                     </View>
                     <MapView
                         ref={mapRef}
@@ -178,27 +138,27 @@ const TripDetails = ({ route }) => {
                             longitudeDelta: 5,
                         }}
                     >
-                    {selectedLocation && (
-                        <Marker
-                            coordinate={{
-                                latitude: selectedLocation.lat,
-                                longitude: selectedLocation.lng,
-                            }}
-                            title="Selected Location"
-                            description="This is the selected location"
-                            onPress={handleMarkerPress} // Handle tap on the marker
-                        />                        
-                    )}
+                        {selectedLocation && (
+                            <Marker
+                                coordinate={{
+                                    latitude: selectedLocation.lat,
+                                    longitude: selectedLocation.lng,
+                                }}
+                                title="Selected Location"
+                                description="This is the selected location"
+                                onPress={handleMarkerPress} // Handle tap on the marker
+                            />
+                        )}
                     </MapView>
                     <MarkerModal
                         visible={showModal}
-                        onConfirm={() => handleConfirmSelection(selectedLocation)}
+                        onConfirm={handleConfirmSelection}
                         onCancel={handleCancelSelection}
                     />
                 </View>
             </InnerContainer>
-        </View>
+        </StyledContainer>
     );
 };
 
-export default TripDetails;
+export default EditPlan;
