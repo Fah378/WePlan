@@ -41,6 +41,13 @@ export const InnerContainerII = styled.View`
     align-items: center;
 `;
 
+export const InnerContainerIII = styled.View`
+    flex: 1;
+    width: 100%;
+    align-items: left;
+`;
+
+
 export const WelcomeContainer = styled(InnerContainer)`
     padding: 25px;
     padding-top: 10px;
@@ -97,10 +104,6 @@ export const PageTitleIII = styled.Text`
     font-weight: bold;
     color: ${brand};
     padding: 10px;
-
-    ${ (props) => props.welcome && `
-        font-size: 35px;
-    `}
 `;
 
 export const SubTitle = styled.Text`
@@ -244,5 +247,7 @@ export const TripPanel = styled.TouchableOpacity`
 `;
 
 export const TripPanelText = styled.Text`
-    color: black; /* Adjust text color as needed */
+    color: black; 
+    font-size: 16px; 
+    margin-top: 5px;
 `;

@@ -7,34 +7,8 @@ import MarkerModal from '../components/MarkerModal';
 import {
     StyledContainer,
     InnerContainer,
-    PageTitleII,
-    SubTitle,
-    StyledFormArea,
-    LeftIcon,
-    StyledInputLabel,
-    StyledTextInput,
-    RightIcon,
-    StyledButton,
-    ButtonText,
-    Colors,
-    MsgBox,
-    Line,
-    ExtraText,
-    ExtraView,
-    TextLink,
-    TextLinkContent,
-    WelcomeContainer,
-    PageTitle
+    Colors
 } from '../components/styles';
-
-// Import CredentialsContext to access stored credentials
-import { CredentialsContext } from './../components/CredentialsContext';
-
-//icons
-import { Octicons, Ionicons } from '@expo/vector-icons';
-
-//keyboard avoiding view
-import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
 
 //colors
 const { brand, darklight, primary } = Colors;
@@ -69,7 +43,8 @@ const styles = StyleSheet.create({
 });
 
 const EditPlan = ({ route }) => {
-    const { tripDetails } = route.params; // Get trip details from navigation parameters
+    console.log('Route params:', route.params);
+    const { trip } = route.params;
     const mapRef = useRef(null);
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -103,59 +78,71 @@ const EditPlan = ({ route }) => {
         );
     }
 
+    const handlePress = (data, details = null) => {
+        if (details && details.geometry && details.geometry.location) {
+            console.log("Selected location details:", {
+                name: details.name,
+                lat_lng: `${details.geometry.location.lat},${details.geometry.location.lng}`
+            });
+    
+            setSelectedLocation({
+                name: details.name,
+                lat: details.geometry.location.lat,
+                lng: details.geometry.location.lng,
+            });
+    
+            moveToLocation(details.geometry.location.lat, details.geometry.location.lng);
+        } else {
+            console.error('Selected location is undefined or null.');
+        }
+    };      
+
     return (
         <StyledContainer>
             <StatusBar style="dark" />
             <InnerContainer>
-                <View style={styles.container}>
-                    <View style={styles.searchContainer}>
-                        <GooglePlacesAutocomplete
-                            fetchDetails={true}
-                            placeholder='Search'
-                            onPress={(data, details = null) => {
-                                console.log(JSON.stringify(details?.geometry?.location));
-                                moveToLocation(
-                                    details?.geometry?.location.lat,
-                                    details?.geometry?.location.lng
-                                );
-                                setSelectedLocation(details?.geometry?.location);
-                            }}
-                            query={{
-                                key: GOOGLE_MAPS_API_KEY,
-                                language: 'en',
-                            }}
-                            onFail={error => console.log(error)}
-                        />
-                    </View>
-                    <MapView
-                        ref={mapRef}
-                        provider={PROVIDER_GOOGLE}
-                        style={styles.map}
-                        region={{
-                            latitude: 13.7563,
-                            longitude: 100.5018,
-                            latitudeDelta: 5,
-                            longitudeDelta: 5,
-                        }}
-                    >
-                        {selectedLocation && (
-                            <Marker
-                                coordinate={{
-                                    latitude: selectedLocation.lat,
-                                    longitude: selectedLocation.lng,
-                                }}
-                                title="Selected Location"
-                                description="This is the selected location"
-                                onPress={handleMarkerPress} // Handle tap on the marker
-                            />
-                        )}
-                    </MapView>
-                    <MarkerModal
-                        visible={showModal}
-                        onConfirm={handleConfirmSelection}
-                        onCancel={handleCancelSelection}
-                    />
+            <View style={styles.container}>
+                <View style={styles.searchContainer}>
+                <GooglePlacesAutocomplete
+                    fetchDetails={true}
+                    placeholder='Search'
+                    onPress={handlePress}
+                    query={{
+                        key: GOOGLE_MAPS_API_KEY,
+                        language: 'en',
+                    }}
+                    onFail={error => console.log(error)}
+                />
                 </View>
+                <MapView
+                    ref={mapRef}
+                    provider={PROVIDER_GOOGLE}
+                    style={styles.map}
+                    region={{
+                        latitude: 13.7563,
+                        longitude: 100.5018,
+                        latitudeDelta: 5,
+                        longitudeDelta: 5,
+                    }}
+                >
+                {selectedLocation && (
+                    <Marker
+                        coordinate={{
+                            latitude: selectedLocation.lat,
+                            longitude: selectedLocation.lng,
+                        }}
+                        title="Selected Location"
+                        description="This is the selected location"
+                        onPress={handleMarkerPress} // Handle tap on the marker
+                    />                        
+                )}
+                </MapView>
+                <MarkerModal
+                    visible={showModal}
+                    onConfirm={() => handleConfirmSelection(selectedLocation)}
+                    onCancel={handleCancelSelection}
+                />
+            </View>
             </InnerContainer>
         </StyledContainer>
     );

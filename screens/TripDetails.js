@@ -1,13 +1,14 @@
 import React, { useState, useContext, useRef } from 'react';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { StatusBar, View, Text, StyleSheet, Dimensions } from 'react-native';
+import { StatusBar, View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MarkerModal from '../components/MarkerModal';
+import { useNavigation } from '@react-navigation/native';
 
 import {
     StyledContainer,
     InnerContainer,
-    PageTitleII,
+    PageTitleIII,
     SubTitle,
     StyledFormArea,
     LeftIcon,
@@ -69,7 +70,8 @@ const styles = StyleSheet.create({
 });
 
 const TripDetails = ({ route }) => {
-    const { tripDetails } = route.params; // Get trip details from navigation parameters
+    const { trip } = route.params; // Get trip details from navigation parameters
+    const navigation = useNavigation();
     const mapRef = useRef(null);
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -116,88 +118,46 @@ const TripDetails = ({ route }) => {
         setShowModal(true); // Show the modal
     };
 
-    const handlePress = (data, details = null) => {
-        if (details && details.geometry && details.geometry.location) {
-            console.log("Selected location details:", {
-                name: details.name,
-                lat_lng: `${details.geometry.location.lat},${details.geometry.location.lng}`
-            });
+    //Function to calculate date
+    const generateDayLabels = (startDateStr, endDateStr) => {
+        const startDate = new Date(startDateStr);
+        const endDate = new Date(endDateStr);
+        const timeDiff = endDate - startDate;
+        const daysDiff = Math.round(timeDiff / (1000 * 3600 * 24));
+        const dayLabels = [];
     
-            setSelectedLocation({
-                name: details.name,
-                lat: details.geometry.location.lat,
-                lng: details.geometry.location.lng,
-            });
-    
-            moveToLocation(details.geometry.location.lat, details.geometry.location.lng);
-        } else {
-            console.error('Selected location is undefined or null.');
+        for (let i = 1; i <= daysDiff + 1; i++) { // +1 to include the end day
+            dayLabels.push(`Day ${i}`);
         }
-    };      
-
-    // Function to move to a specific location on the map
-    async function moveToLocation(latitude, longitude) {
-        mapRef.current.animateToRegion(
-            {
-                latitude,
-                longitude,
-                latitudeDelta: 0.015,
-                longitudeDelta: 0.0121,
-            },
-            2000,
-        );
-    }
+    
+        return dayLabels;
+    };    
 
     return (
+    <KeyboardAvoidingWrapper>
         <View style={styles.container}>
             <StatusBar style="dark" />
             <InnerContainer>
-                <SubTitle>{tripDetails.tripName}</SubTitle>
-                <SubTitle>{tripDetails.startDate} - {tripDetails.endDate}</SubTitle>
-                <View style={styles.container}>
-                    <View style={styles.searchContainer}>
-                    <GooglePlacesAutocomplete
-                        fetchDetails={true}
-                        placeholder='Search'
-                        onPress={handlePress}
-                        query={{
-                            key: GOOGLE_MAPS_API_KEY,
-                            language: 'en',
-                        }}
-                        onFail={error => console.log(error)}
-                    />
-                    </View>
-                    <MapView
-                        ref={mapRef}
-                        provider={PROVIDER_GOOGLE}
-                        style={styles.map}
-                        region={{
-                            latitude: 13.7563,
-                            longitude: 100.5018,
-                            latitudeDelta: 5,
-                            longitudeDelta: 5,
-                        }}
-                    >
-                    {selectedLocation && (
-                        <Marker
-                            coordinate={{
-                                latitude: selectedLocation.lat,
-                                longitude: selectedLocation.lng,
-                            }}
-                            title="Selected Location"
-                            description="This is the selected location"
-                            onPress={handleMarkerPress} // Handle tap on the marker
-                        />                        
-                    )}
-                    </MapView>
-                    <MarkerModal
-                        visible={showModal}
-                        onConfirm={() => handleConfirmSelection(selectedLocation)}
-                        onCancel={handleCancelSelection}
-                    />
+                <PageTitle style={{ marginTop: 20 }}>{trip.tripName}</PageTitle>
+                <SubTitle>{trip.startDate} - {trip.endDate}</SubTitle>
+                <SubTitle>
+                    {`Duration: ${generateDayLabels(trip.startDate, trip.endDate).length - 1} days`}
+                </SubTitle>
+                <View style={{ alignItems: 'flex-start', width: '100%' }}>
+                    {generateDayLabels(trip.startDate, trip.endDate).map((dayLabel, index) => (
+                        <View key={index} style={{ marginVertical: 5 }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <PageTitleIII>{dayLabel}</PageTitleIII>
+                            </View>
+                            <TextLink onPress={() => navigation.navigate('EditPlan', { trip: trip })}>
+                                <TextLinkContent style={{ marginLeft: 15 }}>+ Add new destination</TextLinkContent>
+                            </TextLink>
+                        </View>
+                    ))}
                 </View>
             </InnerContainer>
         </View>
+    </KeyboardAvoidingWrapper>
     );
 };
 

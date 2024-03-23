@@ -1,8 +1,6 @@
 import React, {useState, useContext, useEffect}  from 'react';
 import { StatusBar } from 'expo-status-bar';
 
-import Add from './Plans';
-
 //formik
 import { Formik } from 'formik';
 
@@ -12,31 +10,21 @@ import {
     PageTitle,
     SubTitle,
     StyledFormArea,
-    LeftIcon,
     StyledInputLabel,
     StyledTextInputII,
-    RightIcon,
     StyledButton,
     ButtonText, 
     Colors,
-    MsgBox,
-    Line,
-    ExtraText,
-    ExtraView,
-    TextLink,
-    TextLinkContent
+    MsgBox
 } from './../components/styles';
 
 import {View, ActivityIndicator} from 'react-native';
 
 //colors
-const{brand, darklight, primary} = Colors;
+const{ darklight, primary} = Colors;
 
 //keyboard avoiding view
 import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
-
-//async-storage
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //credentials context
 import { CredentialsContext } from './../components/CredentialsContext';
@@ -51,31 +39,6 @@ const Create = () => {
     //context
     const { storedCredentials, setStoredCredentials } = useContext(CredentialsContext);
     const { _id, username} = storedCredentials; // Extract userID from storedCredentials
-    
-    //form handling
-    // const handleCreate = (credentials, setSubmitting) => {
-    //     handleMessage(null);
-    //     const url = 'http://27.55.95.75:3000/plans/plans';
-
-    //     axios
-    //         .post(url, credentials)
-    //         .then((response) => {
-    //             const result = response.data;
-    //             const {message, status, data} = result;
-
-    //             if (status !== 'SUCCESS'){
-    //                 handleMessage(message, status);
-    //             } else {
-    //                 navigation.navigate('Add');
-    //             }
-    //             setSubmitting(false);
-    //         })
-    //         .catch(error => {
-    //         console.log(error);
-    //         setSubmitting(false);
-    //         handleMessage("An error occured. Check your network and try again.");
-    //     })
-    // }
 
     useEffect(() => {
         console.log("Stored Credentials:", storedCredentials);
@@ -196,16 +159,8 @@ const Create = () => {
                             <ActivityIndicator size = "large" color = {primary}/>
                         </StyledButton>
                     )}
-                    {/* <Line />
-                    <ExtraView>
-                    <ExtraText>Already have an account?  </ExtraText>
-                        <TextLink onPress ={() => navigation.navigate("Login") }>
-                            <TextLinkContent >Login</TextLinkContent>
-                        </TextLink>
-                    </ExtraView> */}
                 </StyledFormArea>
                 )}
-
                 </Formik>
             </InnerContainer>
         </StyledContainer>

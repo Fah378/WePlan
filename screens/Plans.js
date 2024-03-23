@@ -3,7 +3,6 @@ import { StatusBar, View, Text, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import {
     InnerContainer,
-    StyledContainer,
     StyledButton,
     ButtonText,
     TripPanel,
@@ -18,7 +17,7 @@ import { CredentialsContext } from '../components/CredentialsContext';
 //keyboard avoiding view
 import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
 
-const Plans = ({_id}) => {
+const Plans = () => {
     const { storedCredentials } = useContext(CredentialsContext);
     const [tripDetails, setTripDetails] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -61,7 +60,7 @@ const Plans = ({_id}) => {
 
     // Function to navigate to TripDetails screen with trip details
     const navigateToTripDetails = (trip) => {
-        navigation.navigate('TripDetails', { tripDetails: trip });
+        navigation.navigate('TripDetails', { trip: trip });
     };
 
     // Function to navigate to Create screen

@@ -2,8 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, TouchableOpacity, FlatList } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Octicons } from '@expo/vector-icons';
-import { InnerContainer, 
-  PageTitleIII, 
+import {  PageTitleIII, 
   Colors, 
   TripPanel, 
   TripPanelText, 
@@ -62,9 +61,8 @@ const HomeScreen = ({ name }) => {
     return date.toISOString().split('T')[0];
   };
 
-  // Function to navigate to TripDetails screen with trip details
   const navigateToTripDetails = (trip) => {
-    navigation.navigate('TripDetails', { tripDetails: trip });
+    navigation.navigate('TripDetails', { trip: trip });
 };
 
   const renderItem = ({ item }) => (
