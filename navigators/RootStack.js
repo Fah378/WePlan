@@ -17,7 +17,7 @@ import Explore from './../screens/Explore';
 import Create from '../screens/Create';
 import ExistPlan from '../screens/ExistPlan';
 import TripDetails from '../screens/TripDetails';
-import EditPlan from '../screens/EditPlan';
+import InsertPlan from '../screens/InsertPlan';
 
 // Import CredentialsContext
 import { CredentialsContext } from './../components/CredentialsContext';
@@ -69,12 +69,12 @@ const RootStack = () => {
               }}
         />
         <Stack.Screen 
-            name="EditPlan" 
-            component={EditPlan} 
+            name="InsertPlan" 
+            component={InsertPlan} 
             options={{
                 headerShown: true, 
                 headerBackTitle: 'Back',
-                headerTitle: 'Edit Plan',
+                headerTitle: 'Insert Plan',
               }}
         />
       </Stack.Navigator>

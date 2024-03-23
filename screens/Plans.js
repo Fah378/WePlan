@@ -20,6 +20,7 @@ import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
 const Plans = () => {
     const { storedCredentials } = useContext(CredentialsContext);
     const [tripDetails, setTripDetails] = useState([]);
+    const [planID, setPlanID] = useState(null); // Declare planID state variable
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigation = useNavigation();
@@ -34,6 +35,8 @@ const Plans = () => {
                 }
     
                 const data = await response.json();
+                // Extract PlanID from the response data
+                const planID = data.planID; // Adjust this based on the actual structure of your response data
                 // Format dates to display only the date part
                 const formattedTripDetails = data.tripDetails.map(trip => ({
                     ...trip,
@@ -41,6 +44,7 @@ const Plans = () => {
                     endDate: formatDate(trip.endDate),
                 }));
                 setTripDetails(formattedTripDetails);
+                setPlanID(planID); // Set the PlanID in your component state
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching plans:', error);
@@ -51,6 +55,7 @@ const Plans = () => {
     
         fetchPlans();
     }, []);
+    
 
     // Function to format date to display only the date part
     const formatDate = (dateString) => {
@@ -60,8 +65,9 @@ const Plans = () => {
 
     // Function to navigate to TripDetails screen with trip details
     const navigateToTripDetails = (trip) => {
-        navigation.navigate('TripDetails', { trip: trip });
-    };
+        console.log("Plan to TripDetails:", trip);
+        navigation.navigate('TripDetails', { trip: trip, planID: trip.planID }); // Use trip.planID instead of trip._id
+    };    
 
     // Function to navigate to Create screen
     const navigateToCreate = () => {

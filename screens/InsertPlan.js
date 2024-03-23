@@ -42,18 +42,43 @@ const styles = StyleSheet.create({
     },
 });
 
-const EditPlan = ({ route }) => {
+const InsertPlan = ({ route }) => {
     console.log('Route params:', route.params);
-    const { trip } = route.params;
+    const { trip, selectedDate } = route.params;
     const mapRef = useRef(null);
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [showModal, setShowModal] = useState(false);
 
     // Function to handle confirming selection and pinning the marker
-    const handleConfirmSelection = () => {
-        // Perform actions to pin the marker permanently
-        setShowModal(false); // Close the modal
-    };
+    const handleConfirmSelection = async () => {
+        // Delay execution to ensure state update
+        setTimeout(async () => {
+            console.log("Selected location in confirm:", selectedLocation);
+    
+            // Prepare data for API request
+            const requestData = {
+                locationName: selectedLocation.name,
+                date: selectedDate, // Use the selected date
+                lat: selectedLocation.lat,
+                lng: selectedLocation.lng,
+                plansID: trip.planID,
+            };
+    
+            try {
+                // Call the API endpoint to post data
+                const response = await axios.post('http://172.20.10.3:3000/details/details', requestData);
+                console.log('Response from API:', response.data);
+    
+                // Optionally update state or perform other actions upon successful post
+            } catch (error) {
+                console.error('Error posting data to API:', error);
+                // Handle error
+            }
+    
+            // Perform actions to pin the marker permanently
+            setShowModal(false); // Close the modal
+        }, 50); // Delay of 50 milliseconds 
+    };    
 
     // Function to handle cancelling selection
     const handleCancelSelection = () => {
@@ -62,6 +87,7 @@ const EditPlan = ({ route }) => {
 
     // Function to handle tapping on the marker
     const handleMarkerPress = () => {
+        console.log("Selected location:", selectedLocation);
         setShowModal(true); // Show the modal
     };
 
@@ -148,4 +174,4 @@ const EditPlan = ({ route }) => {
     );
 };
 
-export default EditPlan;
+export default InsertPlan;
