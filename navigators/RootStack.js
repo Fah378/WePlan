@@ -18,6 +18,7 @@ import Create from '../screens/Create';
 import ExistPlan from '../screens/ExistPlan';
 import TripDetails from '../screens/TripDetails';
 import InsertPlan from '../screens/InsertPlan';
+import Test from '../screens/test';
 
 // Import CredentialsContext
 import { CredentialsContext } from './../components/CredentialsContext';
@@ -77,6 +78,7 @@ const RootStack = () => {
                 headerTitle: 'Insert Plan',
               }}
         />
+        <Stack.Screen name="Test" component={Test} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -68,7 +68,11 @@ const InsertPlan = ({ route }) => {
                 // Call the API endpoint to post data
                 const response = await axios.post('http://172.20.10.3:3000/details/details', requestData);
                 console.log('Response from API:', response.data);
-    
+                // Right here, call the passed callback to refresh details in TripDetails
+                    if (route.params?.onGoBack) {
+                        route.params.onGoBack();
+                    }
+
                 // Optionally update state or perform other actions upon successful post
             } catch (error) {
                 console.error('Error posting data to API:', error);

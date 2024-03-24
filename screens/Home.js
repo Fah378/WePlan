@@ -14,26 +14,29 @@ import { CredentialsContext } from './../components/CredentialsContext';
 import SettingsScreen from './Settings';
 import PlansScreen from './Plans';
 import ExploreScreen from './Explore';
+import TripDetails from './TripDetails';
 
 const HomeScreen = ({ name }) => {
   const [tripDetails, setTripDetails] = useState([]);
+  const [userTripDetails, setUserTripDetails] = useState([]);
+  const [publicTripDetails, setPublicTripDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { storedCredentials } = useContext(CredentialsContext);
   const navigation = useNavigation();
 
   useEffect(() => {
-    const fetchPlans = async () => {
+    const fetchUserPlans = async () => {
       try {
         if (!storedCredentials) {
-          // If storedCredentials is null, do not proceed with fetching plans
+          // If storedCredentials is null, do not proceed with fetching user plans
           return;
         }
 
-        const response = await fetch(`http://172.20.10.3:3000/plans/plans/${storedCredentials?._id}`, {});
+        const response = await fetch(`http://172.20.10.3:3000/plans/plans/${storedCredentials?._id}`);
 
         if (!response.ok) {
-          throw new Error(`Failed to fetch plans: ${response.status} ${response.statusText}`);
+          throw new Error(`Failed to fetch user plans: ${response.status} ${response.statusText}`);
         }
 
         const data = await response.json();
@@ -42,18 +45,44 @@ const HomeScreen = ({ name }) => {
           startDate: formatDate(trip.startDate),
           endDate: formatDate(trip.endDate),
         }));
-        // Sort tripDetails based on startDate
+        // Sort userTripDetails based on startDate
         formattedTripDetails.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
-        setTripDetails(formattedTripDetails);
+        setUserTripDetails(formattedTripDetails);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching plans:', error);
-        setError('Failed to fetch plans. Please try again later.');
+        console.error('Error fetching user plans:', error);
+        setError('Failed to fetch user plans. Please try again later.');
         setLoading(false);
       }
     };
 
-    fetchPlans();
+    const fetchPublicPlans = async () => {
+      try {
+        const response = await fetch(`http://172.20.10.3:3000/plans/public-plans`);
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch public plans: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        const formattedTripDetails = data.tripDetails.map(trip => ({
+          ...trip,
+          startDate: formatDate(trip.startDate),
+          endDate: formatDate(trip.endDate),
+        }));
+        // Sort publicTripDetails based on startDate
+        formattedTripDetails.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+        setPublicTripDetails(formattedTripDetails);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching public plans:', error);
+        setError('Failed to fetch public plans. Please try again later.');
+        setLoading(false);
+      }
+    };
+
+    fetchUserPlans();
+    fetchPublicPlans();
   }, []);
 
   const formatDate = (dateString) => {
@@ -62,39 +91,56 @@ const HomeScreen = ({ name }) => {
   };
 
   const navigateToTripDetails = (trip) => {
-    navigation.navigate('TripDetails', { trip: trip });
+    navigation.navigate('TripDetails', { 
+      trip: trip,
+      onPlanMadePublic: fetchPlans // Pass the callback function here
+    });
+  };
+
+const renderUserItem = ({ item }) => (
+  <TouchableOpacity onPress={() => navigateToTripDetails(item)}>
+    <TripPanel>
+      <TripPanelText>
+        <SubTitle>{item.tripName}</SubTitle>
+        <Text>{'\n'}</Text>
+        <SubTitle>{item.startDate} - {item.endDate}</SubTitle>
+      </TripPanelText>
+    </TripPanel>
+  </TouchableOpacity>
+);
+
+const renderPublicItem = ({ item }) => (
+  <TouchableOpacity onPress={() => navigateToTripDetails(item)}>
+    <TripPanel>
+      <TripPanelText>
+        <SubTitle>{item.tripName}</SubTitle>
+        <Text>{'\n'}</Text>
+        <SubTitle>{item.startDate} - {item.endDate}</SubTitle>
+      </TripPanelText>
+    </TripPanel>
+  </TouchableOpacity>
+);
+
+return (
+  <View>
+    <PageTitleIII>Welcome, {name}</PageTitleIII>
+    <FlatList
+      data={userTripDetails}
+      renderItem={renderUserItem}
+      keyExtractor={(item, index) => `user_${index}`}
+      horizontal
+      showsHorizontalScrollIndicator={false}
+    />
+    <PageTitleIII>New Plans Arrival</PageTitleIII>
+    <FlatList
+      data={publicTripDetails}
+      renderItem={renderPublicItem}
+      keyExtractor={(item, index) => `public_${index}`}
+      showsHorizontalScrollIndicator={false}
+    />
+  </View>
+);
 };
-
-  const renderItem = ({ item }) => (
-    <TouchableOpacity>
-      <TripPanel onPress={() => navigateToTripDetails(item)}>
-        <TripPanelText>
-          <Text> 
-            <SubTitle>{item.tripName}</SubTitle>
-          </Text>
-          <Text>{'\n'}</Text>
-          <Text>
-            <SubTitle>{item.startDate} - {item.endDate}</SubTitle>
-          </Text>
-        </TripPanelText>
-      </TripPanel>
-    </TouchableOpacity>
-  );  
-
-  return (
-    <View>
-      <PageTitleIII>Welcome, {name}</PageTitleIII>
-      <FlatList
-        data={tripDetails}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-      />
-    </View>
-  );
-};
-
 const Tab = createBottomTabNavigator();
 
 const Home = () => {
