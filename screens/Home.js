@@ -179,12 +179,15 @@ const Home = () => {
         },
       })}
     >
-      <Tab.Screen name="Home">
-        {() => <HomeScreen name={storedCredentials?.name} />}
-      </Tab.Screen>
+      <Tab.Screen
+        name="Home"
+        // pass the userID as a prop to the HomeScreen component
+        children={() => <HomeScreen name={storedCredentials?.name} />}
+      />
       <Tab.Screen
         name="Explore"
-        component={ExploreScreen}
+        // pass the userID as a prop to the ExploreScreen component
+        children={() => <ExploreScreen userID={storedCredentials?._id} />}
       />
       <Tab.Screen
         name="Plans"
