@@ -1,8 +1,12 @@
-import React, { useState, useContext, useRef } from 'react';
+import React, { useState, useContext, useRef, useEffect} from 'react';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { StatusBar, View, Text, StyleSheet, Dimensions } from 'react-native';
+import { StatusBar, View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MarkerModal from '../components/MarkerModal';
+import { Octicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { CredentialsContext } from './../components/CredentialsContext';
+
 
 import {
     StyledContainer,
@@ -40,6 +44,30 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent', // Set background color to transparent
         padding: 5, // Add padding for spacing
     },
+    shareButton: {
+        position: 'absolute',
+        bottom: 40,
+        right: 40,
+      },
+      circle: {
+          width: 50,
+          height: 50,
+          borderRadius: 25,
+          backgroundColor: 'white',
+          position: 'absolute',
+          bottom: 590,
+          right: -17,
+          justifyContent: 'center',
+          alignItems: 'center',
+      },
+      iconContainer: {
+          justifyContent: 'center',
+          alignItems: 'center',
+          top: 0,
+          left: 0,
+          width: 15, // Adjust width to match circle
+          height: 1230, // Adjust height to match circle
+      },
 });
 
 const InsertPlan = ({ route }) => {
@@ -48,6 +76,22 @@ const InsertPlan = ({ route }) => {
     const mapRef = useRef(null);
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const { storedCredentials } = useContext(CredentialsContext);
+    const navigation = useNavigation();
+    const [userID, setUserID] = useState(null);
+
+    useEffect(() => {
+        // Set userID from storedCredentials when component mounts
+        if (storedCredentials) {
+          setUserID(storedCredentials._id);
+        //   console.log('Stored Credentials:', storedCredentials);
+        }
+    }, [storedCredentials]);
+
+    // Function to navigate to Wishlist screen
+    const navigateToWishlist = () => {
+        navigation.navigate('Wishlist'); // Navigate to Wishlist screen
+    };
 
     // Function to handle confirming selection and pinning the marker
     const handleConfirmSelection = async () => {
@@ -131,48 +175,54 @@ const InsertPlan = ({ route }) => {
         <StyledContainer>
             <StatusBar style="dark" />
             <InnerContainer>
-            <View style={styles.container}>
-                <View style={styles.searchContainer}>
-                <GooglePlacesAutocomplete
-                    fetchDetails={true}
-                    placeholder='Search'
-                    onPress={handlePress}
-                    query={{
-                        key: GOOGLE_MAPS_API_KEY,
-                        language: 'en',
-                    }}
-                    onFail={error => console.log(error)}
-                />
-                </View>
-                <MapView
-                    ref={mapRef}
-                    provider={PROVIDER_GOOGLE}
-                    style={styles.map}
-                    region={{
-                        latitude: 13.7563,
-                        longitude: 100.5018,
-                        latitudeDelta: 5,
-                        longitudeDelta: 5,
-                    }}
-                >
-                {selectedLocation && (
-                    <Marker
-                        coordinate={{
-                            latitude: selectedLocation.lat,
-                            longitude: selectedLocation.lng,
+                <View style={styles.container}>
+                    <View style={styles.searchContainer}>
+                        <GooglePlacesAutocomplete
+                            fetchDetails={true}
+                            placeholder='Search'
+                            onPress={handlePress}
+                            query={{
+                                key: GOOGLE_MAPS_API_KEY,
+                                language: 'en',
+                            }}
+                            onFail={error => console.log(error)}
+                        />
+                    </View>
+                    <MapView
+                        ref={mapRef}
+                        provider={PROVIDER_GOOGLE}
+                        style={styles.map}
+                        region={{
+                            latitude: 13.7563,
+                            longitude: 100.5018,
+                            latitudeDelta: 5,
+                            longitudeDelta: 5,
                         }}
-                        title="Selected Location"
-                        description="This is the selected location"
-                        onPress={handleMarkerPress} // Handle tap on the marker
-                    />                        
-                )}
-                </MapView>
-                <MarkerModal
-                    visible={showModal}
-                    onConfirm={() => handleConfirmSelection(selectedLocation)}
-                    onCancel={handleCancelSelection}
-                />
-            </View>
+                    >
+                        {selectedLocation && (
+                            <Marker
+                                coordinate={{
+                                    latitude: selectedLocation.lat,
+                                    longitude: selectedLocation.lng,
+                                }}
+                                title="Selected Location"
+                                description="This is the selected location"
+                                onPress={handleMarkerPress} // Handle tap on the marker
+                            />                        
+                        )}
+                    </MapView>
+                    <TouchableOpacity style={styles.shareButton} onPress={navigateToWishlist}>
+                        <View style={styles.circle} />
+                        <View style={styles.iconContainer} >
+                            <Octicons name="bookmark" size={24} color="black" />
+                        </View>
+                    </TouchableOpacity>
+                    <MarkerModal
+                        visible={showModal}
+                        onConfirm={() => handleConfirmSelection(selectedLocation)}
+                        onCancel={handleCancelSelection}
+                    />
+                </View>
             </InnerContainer>
         </StyledContainer>
     );

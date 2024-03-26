@@ -18,7 +18,7 @@ import Create from '../screens/Create';
 import ExistPlan from '../screens/ExistPlan';
 import TripDetails from '../screens/TripDetails';
 import InsertPlan from '../screens/InsertPlan';
-import Test from '../screens/test';
+import Wishlist from '../screens/Wishlist';
 
 // Import CredentialsContext
 import { CredentialsContext } from './../components/CredentialsContext';
@@ -44,41 +44,49 @@ const RootStack = () => {
         <Stack.Screen name="Plans" component={Plans} />
         <Stack.Screen name="Explore" component={Explore} />
         <Stack.Screen 
-            name="Create" 
-            component={Create} 
-            options={{
-                headerShown: true, 
-                headerBackTitle: 'Back',
-              }}
+          name="Create" 
+          component={Create} 
+          options={{
+              headerShown: true, 
+              headerBackTitle: 'Back',
+            }}
         />
         <Stack.Screen 
-            name="ExistPlan" 
-            component={ExistPlan} 
-            options={{
-                headerShown: true, 
-                headerBackTitle: 'Back',
-                headerTitle: 'List of Exist Plan',
-              }}
+          name="ExistPlan" 
+          component={ExistPlan} 
+          options={{
+              headerShown: true, 
+              headerBackTitle: 'Back',
+              headerTitle: 'List of Exist Plan',
+            }}
         />
         <Stack.Screen 
-            name="TripDetails" 
-            component={TripDetails} 
-            options={{
-                headerShown: true, 
-                headerBackTitle: 'Back',
-                headerTitle: 'Trip Details',
-              }}
+          name="TripDetails" 
+          component={TripDetails} 
+          options={{
+              headerShown: true, 
+              headerBackTitle: 'Back',
+              headerTitle: 'Trip Details',
+            }}
         />
         <Stack.Screen 
-            name="InsertPlan" 
-            component={InsertPlan} 
-            options={{
-                headerShown: true, 
-                headerBackTitle: 'Back',
-                headerTitle: 'Insert Plan',
-              }}
+          name="InsertPlan" 
+          component={InsertPlan} 
+          options={{
+              headerShown: true, 
+              headerBackTitle: 'Back',
+              headerTitle: 'Insert Plan',
+            }}
         />
-        <Stack.Screen name="Test" component={Test} />
+        <Stack.Screen 
+          name="Wishlist" 
+          component={Wishlist}
+          options={{
+            headerShown: true, 
+            headerBackTitle: 'Back',
+            headerTitle: 'Bookmark',
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

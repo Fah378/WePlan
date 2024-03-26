@@ -31,7 +31,6 @@ import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
 const { brand, darklight, primary } = Colors;
 
 const styles = StyleSheet.create({
-    // Existing styles
     shareButton: {
         position: 'absolute',
         bottom: 40,
