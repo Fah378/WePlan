@@ -3,8 +3,6 @@
 import React, { useContext } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { TouchableOpacity, Text } from 'react-native';
-import { Octicons } from '@expo/vector-icons';
 
 // Import screens
 import Login from './../screens/Login';
@@ -19,6 +17,9 @@ import ExistPlan from '../screens/ExistPlan';
 import TripDetails from '../screens/TripDetails';
 import InsertPlan from '../screens/InsertPlan';
 import Wishlist from '../screens/Wishlist';
+import WishlistLink from '../screens/WishlistLink';
+import Expense from '../screens/Expense';
+import InsertExpense from '../screens/InsertExpense';
 
 // Import CredentialsContext
 import { CredentialsContext } from './../components/CredentialsContext';
@@ -85,6 +86,33 @@ const RootStack = () => {
             headerShown: true, 
             headerBackTitle: 'Back',
             headerTitle: 'Bookmark',
+          }}
+        />
+        <Stack.Screen 
+          name="WishlistLink" 
+          component={WishlistLink}
+          options={{
+            headerShown: true, 
+            headerBackTitle: 'Back',
+            headerTitle: 'Bookmark',
+          }}
+        />
+        <Stack.Screen 
+          name="Expense" 
+          component={Expense}
+          options={{
+            headerShown: true, 
+            headerBackTitle: 'Back',
+            headerTitle: 'Trip Expense',
+          }}
+        />
+        <Stack.Screen 
+          name="InsertExpense" 
+          component={InsertExpense}
+          options={{
+            headerShown: true, 
+            headerBackTitle: 'Back',
+            headerTitle: 'Insert new Expense',
           }}
         />
       </Stack.Navigator>

@@ -55,6 +55,16 @@ const styles = StyleSheet.create({
         width: 28, // Adjust width to match circle
         height: 30, // Adjust height to match circle
     },
+    expenseButton: {
+        backgroundColor: '#2ecc71',
+        paddingVertical: 15,
+        paddingHorizontal: 50,
+        borderRadius: 15,
+    },
+    expenseButtonText: {
+        color: 'white',
+        fontSize: 16,
+    },
 });
 
 
@@ -154,6 +164,9 @@ const TripDetails = ({ route }) => {
                     <SubTitle>
                         {`Duration: ${generateDayLabels(trip.startDate, trip.endDate).length - 1} days`}
                     </SubTitle>
+                    <TouchableOpacity onPress={() => navigation.navigate('Expense', { planID: planID })} style={styles.expenseButton}>
+                        <Text style={styles.expenseButtonText}>Trip Expense</Text>
+                    </TouchableOpacity>
                     <View style={{ alignItems: 'flex-start', width: '100%', flex: 1 }}>
                         {generateDayLabels(trip.startDate, trip.endDate).map((day, index) => (
                             <View key={index} style={{ marginVertical: 10 }}>
