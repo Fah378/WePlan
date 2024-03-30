@@ -15,7 +15,7 @@ import {
     StyledButton,
     ButtonText, 
     Colors,
-    MsgBox
+    MsgBox,
 } from './../components/styles';
 
 import {View, ActivityIndicator} from 'react-native';

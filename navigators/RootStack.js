@@ -20,6 +20,7 @@ import Wishlist from '../screens/Wishlist';
 import WishlistLink from '../screens/WishlistLink';
 import Expense from '../screens/Expense';
 import InsertExpense from '../screens/InsertExpense';
+import Search from '../screens/Search';
 
 // Import CredentialsContext
 import { CredentialsContext } from './../components/CredentialsContext';
@@ -40,7 +41,10 @@ const RootStack = () => {
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Signup" component={Signup} />
         <Stack.Screen name="Welcome" component={Welcome} />
-        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen 
+          name="Home" 
+          component={Home}
+        />
         <Stack.Screen name="Settings" component={Settings} />
         <Stack.Screen name="Plans" component={Plans} />
         <Stack.Screen name="Explore" component={Explore} />
@@ -113,6 +117,15 @@ const RootStack = () => {
             headerShown: true, 
             headerBackTitle: 'Back',
             headerTitle: 'Insert new Expense',
+          }}
+        />
+        <Stack.Screen 
+          name="Search" 
+          component={Search}
+          options={{
+            headerShown: true, 
+            headerBackTitle: 'Back',
+            headerTitle: 'Search for Plans',
           }}
         />
       </Stack.Navigator>

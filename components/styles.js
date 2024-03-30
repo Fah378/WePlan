@@ -122,6 +122,10 @@ export const SubTitle = styled.Text`
 export const StyledFormArea = styled.View`
     width: 90%;
 `;
+export const StyledFormAreaII = styled.View`
+    width: 90%;
+    margin-left: 15px; 
+`;
 
 export const StyledTextInput = styled.TextInput`
     background-color: ${secondary};
