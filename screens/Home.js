@@ -2,50 +2,17 @@ import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Octicons } from '@expo/vector-icons';
-import {  PageTitleIII, 
-  Colors, 
-  TripPanel, 
-  TripPanelText, 
-  SubTitle,
-  CustomHeader,
-  CustomHeaderText,
-  MsgBox,
-  StyledFormAreaII,
-  StyledTextInput,
-  StyledInputLabel,
-  LeftIcon
-} from './../components/styles';
+import { PageTitleIII, Colors, TripPanel, TripPanelText, SubTitle, CustomHeader, CustomHeaderText, MsgBox, StyledFormAreaII, StyledTextInput, StyledInputLabel, LeftIcon } from './../components/styles';
 import { useNavigation } from '@react-navigation/native'; 
 import { CredentialsContext } from './../components/CredentialsContext';
 import SettingsScreen from './Settings';
 import PlansScreen from './Plans';
 import ExploreScreen from './Explore';
-import TripDetails from './TripDetails';
-import styled from 'styled-components/native';
 
-//colors
-const{ darklight, brand} = Colors;
-
-const styles = StyleSheet.create({
-  headerContainer: {
-    flexDirection: 'row', // Aligns children in a row
-    justifyContent: 'space-between', // Positions children with space between them
-    alignItems: 'center', // Aligns children vertically in the center
-    padding: 15,
-    backgroundColor: '#f0f0f0',
-  },
-  headerText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    // This style isn't necessary for text alignment but can be used for other text styling
-  },
-  iconButton: {
-    // This can be empty if you don't need specific styling, or you can add padding/margin if desired
-  },
-});
+// Colors
+const { darklight, brand } = Colors;
 
 const HomeScreen = ({ name }) => {
-  const [tripDetails, setTripDetails] = useState([]);
   const [userTripDetails, setUserTripDetails] = useState([]);
   const [publicTripDetails, setPublicTripDetails] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -59,7 +26,6 @@ const HomeScreen = ({ name }) => {
     const fetchUserPlans = async () => {
       try {
         if (!storedCredentials) {
-          // If storedCredentials is null, do not proceed with fetching user plans
           return;
         }
 
@@ -75,7 +41,6 @@ const HomeScreen = ({ name }) => {
           startDate: formatDate(trip.startDate),
           endDate: formatDate(trip.endDate),
         }));
-        // Sort userTripDetails based on startDate
         formattedTripDetails.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
         setUserTripDetails(formattedTripDetails);
         setLoading(false);
@@ -100,7 +65,6 @@ const HomeScreen = ({ name }) => {
           startDate: formatDate(trip.startDate),
           endDate: formatDate(trip.endDate),
         }));
-        // Sort publicTripDetails based on startDate
         formattedTripDetails.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
         setPublicTripDetails(formattedTripDetails);
         setLoading(false);
@@ -127,72 +91,75 @@ const HomeScreen = ({ name }) => {
     });
   };
 
-const renderUserItem = ({ item }) => (
-  <TouchableOpacity onPress={() => navigateToTripDetails(item)}>
-    <TripPanel>
-      <TripPanelText>
-        <SubTitle>{item.tripName}</SubTitle>
-        <Text>{'\n'}</Text>
-        <SubTitle>{item.startDate} - {item.endDate}</SubTitle>
-      </TripPanelText>
-    </TripPanel>
-  </TouchableOpacity>
-);
+  const renderUserItem = ({ item }) => (
+    <TouchableOpacity onPress={() => navigateToTripDetails(item)}>
+      <TripPanel>
+        <TripPanelText>
+          <SubTitle>{item.tripName}</SubTitle>
+          <Text>{'\n'}</Text>
+          <SubTitle>{item.startDate} - {item.endDate}</SubTitle>
+        </TripPanelText>
+      </TripPanel>
+    </TouchableOpacity>
+  );
 
-const renderPublicItem = ({ item }) => (
-  <TouchableOpacity onPress={() => navigateToTripDetails(item)}>
-    <TripPanel>
-      <TripPanelText>
-        <SubTitle>{item.tripName}</SubTitle>
-        <Text>{'\n'}</Text>
-        <SubTitle>{item.startDate} - {item.endDate}</SubTitle>
-      </TripPanelText>
-    </TripPanel>
-  </TouchableOpacity>
-);
+  const renderPublicItem = ({ item }) => (
+    <View>
+    <TouchableOpacity onPress={() => navigation.navigate('PublicPlan')}>
+      <TripPanel>
+        <TripPanelText>
+          <SubTitle>{item.tripName}</SubTitle>
+          <Text>{'\n'}</Text>
+          <SubTitle>{item.startDate} - {item.endDate}</SubTitle>
+        </TripPanelText>
+      </TripPanel>
+    </TouchableOpacity>
+    </View>
+  );  
 
-const MyTextInput = ({label, icon, isPassword, hidePassword, setHidePassword, ...props}) => {
-  return (
+  const MyTextInput = ({ label, icon, isPassword, hidePassword, setHidePassword, ...props }) => {
+    return (
       <View>
-          <LeftIcon>
-              <Octicons name={icon} size={30} color={brand} />
-          </LeftIcon>
-          <StyledInputLabel>{label}</StyledInputLabel>
-          <StyledTextInput {...props}/>
+        <LeftIcon>
+          <Octicons name={icon} size={30} color={brand} />
+        </LeftIcon>
+        <StyledInputLabel>{label}</StyledInputLabel>
+        <StyledTextInput {...props}/>
       </View>
+    );
+  };
+
+  return (
+    <View>
+      <PageTitleIII>Welcome, {name}</PageTitleIII>
+      <SubTitle style>     Search for Plans.</SubTitle>
+      <StyledFormAreaII>
+        <MyTextInput 
+          placeholder="Search"
+          placeholderTextColor={darklight}
+          icon="search"
+        />
+        <MsgBox type={messageType}>{message}</MsgBox>
+      </StyledFormAreaII>
+      <SubTitle>     See your Plans.</SubTitle>
+      <FlatList
+        data={userTripDetails}
+        renderItem={renderUserItem}
+        keyExtractor={(item, index) => `user_${index}`}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+      />
+      <PageTitleIII>New Plans Arrival</PageTitleIII>
+      <FlatList
+        data={publicTripDetails}
+        renderItem={renderPublicItem}
+        keyExtractor={(item, index) => `public_${index}`}
+        showsHorizontalScrollIndicator={false}
+      />
+    </View>
   );
 };
 
-return (
-  <View>
-    <PageTitleIII>Welcome, {name}</PageTitleIII>
-    <SubTitle style>    Search for Plans.</SubTitle>
-    <StyledFormAreaII>
-      <MyTextInput 
-          placeholder="Search"
-          placeholderTextColor={darklight}
-          icon = "search"
-      />
-      <MsgBox type = {messageType}>{message}</MsgBox>
-    </StyledFormAreaII>
-    <SubTitle>    See your Plans.</SubTitle>
-    <FlatList
-      data={userTripDetails}
-      renderItem={renderUserItem}
-      keyExtractor={(item, index) => `user_${index}`}
-      horizontal
-      showsHorizontalScrollIndicator={false}
-    />
-    <PageTitleIII>New Plans Arrival</PageTitleIII>
-    <FlatList
-      data={publicTripDetails}
-      renderItem={renderPublicItem}
-      keyExtractor={(item, index) => `public_${index}`}
-      showsHorizontalScrollIndicator={false}
-    />
-  </View>
-);
-};
 const Tab = createBottomTabNavigator();
 
 const Home = () => {
@@ -233,12 +200,10 @@ const Home = () => {
     >
       <Tab.Screen
         name="Home"
-        // pass the userID as a prop to the HomeScreen component
         children={() => <HomeScreen name={storedCredentials?.name} />}
       />
       <Tab.Screen
         name="Explore"
-        // pass the userID as a prop to the ExploreScreen component
         children={() => <ExploreScreen userID={storedCredentials?._id} />}
       />
       <Tab.Screen

@@ -3,6 +3,7 @@ import { StatusBar,
     View, 
     Text, 
     StyleSheet, 
+    Dimensions, 
     TouchableOpacity,
     Modal 
 } from 'react-native';
@@ -12,6 +13,7 @@ import {
     InnerContainer,
     PageTitleIII,
     SubTitle,
+    Colors,
     TextLink,
     TextLinkContent,
     PageTitle
@@ -19,8 +21,14 @@ import {
 
 import { Octicons } from '@expo/vector-icons';
 
+// Import CredentialsContext to access stored credentials
+import { CredentialsContext } from './../components/CredentialsContext';
+
 //keyboard avoiding view
 import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
+
+//colors
+const { brand, darklight, primary } = Colors;
 
 const styles = StyleSheet.create({
     shareButton: {
@@ -60,7 +68,7 @@ const styles = StyleSheet.create({
 });
 
 
-const TripDetails = ({ route }) => {
+const PublicPlan = ({ route }) => {
     const { trip, planID } = route.params;
     const navigation = useNavigation();
     const [details, setDetails] = useState([]);
@@ -127,7 +135,7 @@ const TripDetails = ({ route }) => {
     const handleShareConfirm = async () => {
         // Call the API to toggle the plan to public
         try {
-            const response = await axios.put(`http://172.20.10.3:3000/plans/plans/${route.params.planID}/togglePublic`);
+            const response = await axios.put(`http://172.20.10.3:3000/plans/plans/6605942fd5ec1cba3ad6175c/togglePublic`);
             console.log('Toggle public status response:', response.data);
     
             // Execute the callback function passed from props
@@ -156,6 +164,7 @@ const TripDetails = ({ route }) => {
                     <SubTitle>
                         {`Duration: ${generateDayLabels(trip.startDate, trip.endDate).length - 1} days`}
                     </SubTitle>
+                    {/* <SubTitle>Cost per person: 6,750 THB</SubTitle> */}
                     <TouchableOpacity onPress={() => navigation.navigate('Expense', { planID: planID })} style={styles.expenseButton}>
                         <Text style={styles.expenseButtonText}>Trip Expense</Text>
                     </TouchableOpacity>
@@ -205,4 +214,4 @@ const TripDetails = ({ route }) => {
     );    
 };
 
-export default TripDetails;
+export default PublicPlan;

@@ -1,12 +1,11 @@
 import React, { useState, useContext, useRef, useEffect} from 'react';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { StatusBar, View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { StatusBar, View, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import MarkerModal from '../components/MarkerModal';
 import { Octicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { CredentialsContext } from './../components/CredentialsContext';
-
 
 import {
     StyledContainer,
@@ -14,14 +13,9 @@ import {
     Colors
 } from '../components/styles';
 
-//colors
-const { brand, darklight, primary } = Colors;
-
 //API client
 import axios from 'axios';
 
-//async-storage
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GOOGLE_MAPS_API_KEY } from '../config/constants/TripDetails';
 
 const styles = StyleSheet.create({

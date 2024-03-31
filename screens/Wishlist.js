@@ -2,10 +2,8 @@ import React, { useContext, useState, useEffect } from 'react';
 import { StatusBar, FlatList, Text } from 'react-native';
 import { InnerContainer, 
     StyledFormArea, 
-    SubTitle,
-    PageTitle
+    SubTitle
  } from '../components/styles';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CredentialsContext } from '../components/CredentialsContext';
 
 const Wishlist = ({ navigation }) => {

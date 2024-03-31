@@ -17,10 +17,10 @@ import ExistPlan from '../screens/ExistPlan';
 import TripDetails from '../screens/TripDetails';
 import InsertPlan from '../screens/InsertPlan';
 import Wishlist from '../screens/Wishlist';
-import WishlistLink from '../screens/WishlistLink';
 import Expense from '../screens/Expense';
 import InsertExpense from '../screens/InsertExpense';
 import Search from '../screens/Search';
+import PublicPlan from '../screens/PublicPlan';
 
 // Import CredentialsContext
 import { CredentialsContext } from './../components/CredentialsContext';
@@ -93,15 +93,6 @@ const RootStack = () => {
           }}
         />
         <Stack.Screen 
-          name="WishlistLink" 
-          component={WishlistLink}
-          options={{
-            headerShown: true, 
-            headerBackTitle: 'Back',
-            headerTitle: 'Bookmark',
-          }}
-        />
-        <Stack.Screen 
           name="Expense" 
           component={Expense}
           options={{
@@ -126,6 +117,15 @@ const RootStack = () => {
             headerShown: true, 
             headerBackTitle: 'Back',
             headerTitle: 'Search for Plans',
+          }}
+        />
+        <Stack.Screen 
+          name="PublicPlan" 
+          component={PublicPlan}
+          options={{
+            headerShown: true, 
+            headerBackTitle: 'Back',
+            headerTitle: 'Trip Details',
           }}
         />
       </Stack.Navigator>

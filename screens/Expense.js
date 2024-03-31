@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { InnerContainer, PageTitleIII, TextLink, TextLinkContent, PageTitleII } from '../components/styles';
-import { StatusBar, View, FlatList, StyleSheet, Text, ScrollView } from 'react-native';
+import { InnerContainer, PageTitleIII, TextLink, TextLinkContent } from '../components/styles';
+import { StatusBar, View, StyleSheet, Text, ScrollView } from 'react-native';
 import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
 import { CredentialsContext } from './../components/CredentialsContext';
 import axios from 'axios';
@@ -47,7 +47,6 @@ const Expense = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const { planID } = route.params;
-    const { storedCredentials, setStoredCredentials } = useContext(CredentialsContext);
     const [expenses, setExpenses] = useState([]);
     const [totalExpense, setTotalExpense] = useState(0);
     const scrollViewRef = useRef(null);

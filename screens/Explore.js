@@ -34,7 +34,7 @@ const Explore = () => {
         return;
       }
   
-      const apiKey = "AIzaSyCHHe34HTyyK0Mw6_cPdOUilkHOb9NRK6s"; // Replace "YOUR_API_KEY" with your actual API key
+      const apiKey = "AIzaSyCHHe34HTyyK0Mw6_cPdOUilkHOb9NRK6s"; 
   
       const response = await fetch(`https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${apiKey}`);
       if (!response.ok) {
@@ -148,8 +148,8 @@ const Explore = () => {
         alignItems: 'center',
         top: 0,
         left: 0,
-        width: 28, // Adjust width to match circle
-        height: 30, // Adjust height to match circle
+        width: 28, 
+        height: 30, 
     },
   });
 
@@ -195,8 +195,8 @@ const Explore = () => {
         body: JSON.stringify(dataToSend),
       });
 
-      const responseData = await response.json(); // Parse response body
-      console.log('Response:', responseData); // Log response data
+      const responseData = await response.json(); 
+      console.log('Response:', responseData); 
 
       if (response.ok) {
         Alert.alert('Success', 'Location added to wishlist!');
@@ -216,7 +216,6 @@ const navigateToWishlist = () => {
 
   return (
     <View style={styles.container}>
-      {/* Horizontal scrollable list of categories */}
       <ScrollView horizontal contentContainerStyle={styles.categoryList} style={styles.scrollView}>
         <View style={styles.categoryWrapper}>
           <Text style={styles.category} onPress={() => fetchPlacesByCategory('Tourist attractions')}>Tourist attractions</Text>
@@ -297,7 +296,7 @@ const navigateToWishlist = () => {
         </View>
       </View>
     </Modal>
-    </View>
+  </View>
   );
 };
 

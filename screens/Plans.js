@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext} from 'react';
-import { StatusBar, View, Text, TouchableOpacity } from 'react-native';
+import { StatusBar, Text, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import {
     InnerContainer,
